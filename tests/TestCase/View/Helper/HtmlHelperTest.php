@@ -111,12 +111,11 @@ class HtmlHelperTest extends TestCase
     public function testGrid()
     {
         $result = $this->Html
-            ->gridContent('test 1')
-            ->gridConfig(['size' => 3])
+            ->grid('test 1', ['size' => 3])
             ->gridConfig(['type' => 'xs', 'size' => 12])
-            ->gridContent('test 2')
+            ->grid('test 2')
             ->gridConfig(['size' => 9])
-            ->gridConfig(['type' => 'xs', 'size' => 12])
+            ->gridConfig(['type' => 'xs', 'size' => 11, 'offset' => ['size' => 1, 'type' => 'xs']])
             ->gridRender();
 
         $expected = [
@@ -124,8 +123,44 @@ class HtmlHelperTest extends TestCase
             ['div' => ['class' => 'col-md-3 col-xs-12']],
             'test 1',
             '/div',
-            ['div' => ['class' => 'col-md-9 col-xs-12']],
+            ['div' => ['class' => 'col-md-9 col-xs-11 col-xs-offset-1']],
             'test 2',
+            '/div',
+            '/div',
+        ];
+
+        $this->assertHtml($expected, $result);
+    }
+
+    public function testNav()
+    {
+        $result = $this->Html
+            ->addNav('test 1', 'content 1', 'active')
+            ->addNav('test 2', 'content 2', 'disabled')
+            ->addNav('test 3', 'content 3')
+            ->getNav();
+
+        $expected = [
+            'ul' => ['class' => 'nav nav-tabs'],
+            ['li' => ['class' => 'active']],
+            'test 1',
+            '/li',
+            ['li' => ['class' => 'disabled']],
+            'test 2',
+            '/li',
+            '<li',
+            'test 3',
+            '/li',
+            '/ul',
+            'div' => ['class' => 'tab-content'],
+            ['div' => ['class' => 'tab-pane active']],
+            'content 1',
+            '/div',
+            ['div' => ['class' => 'tab-pane disabled']],
+            'content 2',
+            '/div',
+            ['div' => ['class' => 'tab-pane']],
+            'content 3',
             '/div',
             '/div',
         ];
